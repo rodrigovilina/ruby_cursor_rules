@@ -1,0 +1,50 @@
+---
+description: TDD workflow with single test additions and minimal code changes
+alwaysApply: false
+---
+# TDD (Test-Driven Development) Workflow
+
+Follow the strict TDD cycle: Red → Green → Refactor, with emphasis on small, incremental steps.
+
+## Core TDD Loop:
+
+### 1. Red Phase - Write a Single Test
+- **Add only ONE test at a time**
+- Write the test first, before any implementation
+- The test should fail (Red)
+- Focus on the next smallest piece of functionality needed
+
+### 2. Green Phase - Make the Test Pass
+- **Write only the minimal code necessary** to make the test pass
+- **Do NOT write more code than required**
+- **Do NOT add extra features or optimizations**
+- The goal is to get to Green as quickly as possible
+
+### 3. Refactor Phase - Clean Up
+- Only refactor after the test is passing
+- Improve code structure without changing behavior
+- Ensure all tests still pass
+
+## Key Principles:
+
+### Single Test Rule
+- Never add multiple tests simultaneously
+- Each test should represent one small, specific behavior
+- Complete the full cycle for each test before moving to the next
+
+### Minimal Implementation Rule
+- Write the absolute minimum code to make the current test pass
+- Resist the urge to "future-proof" or add extra functionality
+- Let the tests drive the design, not assumptions about future needs
+
+### Incremental Development
+- Build functionality one small piece at a time
+- Each test should add a tiny increment of behavior
+- This prevents over-engineering and keeps focus on current requirements
+
+## Benefits:
+- Prevents over-engineering
+- Ensures every piece of code is tested
+- Creates a clear, step-by-step development process
+- Makes debugging easier since changes are small and focused
+- Forces you to think about the interface before implementation

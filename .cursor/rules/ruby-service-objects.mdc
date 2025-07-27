@@ -1,0 +1,51 @@
+---
+alwaysApply: false
+description: Ruby service object pattern with private new method and public call method
+---
+# Ruby Service Object Pattern
+
+A service object is a class that follows a specific pattern for encapsulation and usage.
+
+## Structure Requirements:
+
+### Public Interface
+- **Single public class method**: `call`
+- **Usage**: `MyService.call(arg1, arg2, ...)`
+
+### Private Constructor
+- **Make `.new` private**: Prevents direct instantiation
+- **Goal**: Make it "impossible" to create a new instance of a service object
+
+### Internal Implementation
+- **`call` method behavior**:
+  1. Pass arguments to `.new`
+  2. Call private `perform` method using `new.__send__(:perform)`
+  3. Return the result of `perform` method (not the instance)
+
+## Example Pattern:
+```ruby
+class MyService
+  def self.call(...)
+    new(...).__send__(:perform)
+  end
+  private_class_method :new
+
+  private
+
+  def initialize(arg1, arg2)
+    # initialization logic
+  end
+
+  def perform
+    # main service logic
+    # return result
+  end
+end
+```
+
+## Key Principles:
+- Service objects should be stateless and focused on a single responsibility
+- The `call` method should be the only public interface
+- Direct instantiation should be prevented through private `new`
+- The `perform` method contains the actual business logic
+- Return values come from `perform`, not the instance itself

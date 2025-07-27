@@ -1,0 +1,103 @@
+---
+alwaysApply: false
+description: Sandi Metz rules for developers - method length, arguments, class size, and Rails controller structure
+---
+# Sandi Metz Rules for Developers
+
+Follow these strict guidelines for clean, maintainable code:
+
+## 1. Method Length Rule
+**Methods can be at most 5 lines of code**
+
+### What Counts Toward the 5 Lines:
+- All code lines including `if-else` statements
+- The `end` keyword
+- Any executable code
+
+### Exceptions (Don't Count Toward 5 Lines):
+- Multiline hashes and arrays
+- Heredocs
+- Case statements
+
+### Example:
+```ruby
+# ✅ Good - 5 lines or fewer
+def calculate_total(items)
+  return 0 if items.empty?
+  items.sum { |item| item.price * item.quantity }
+end
+
+# ❌ Bad - More than 5 lines
+def calculate_total(items)
+  return 0 if items.empty?
+  total = 0
+  items.each do |item|
+    total += item.price * item.quantity
+  end
+  total
+end
+```
+
+## 2. Method Arguments Rule
+**Methods can have at most 4 arguments**
+
+### Restrictions:
+- No cheating with hashes to pass more data
+- Consider using objects to group related data
+
+### Example:
+```ruby
+# ✅ Good - 4 or fewer arguments
+def create_user(name, email, age, role)
+  # implementation
+end
+
+# ❌ Bad - More than 4 arguments
+def create_user(name, email, age, role, phone, address, preferences)
+  # implementation
+end
+```
+
+## 3. Class/Module Size Rule
+**Classes, modules, and files can be no longer than 100 lines of code**
+
+### Guidelines:
+- Keep classes focused on a single responsibility
+- Extract complex logic into smaller classes
+- Consider breaking large classes into multiple smaller ones
+
+## 4. Rails Controller Rule
+**Rails controllers can at most call one Service object and one Presenter**
+
+### Structure:
+- Controller calls **one** Service object
+- Controller calls **one** Presenter
+- Controller passes only the View Model from the Presenter as the **only** instance variable to the view
+
+### Example:
+```ruby
+# ✅ Good - Follows the rule
+class UsersController < ApplicationController
+  def show
+    user = UserService.find_user(params[:id])
+    @view_model = UserPresenter.new(user).view_model
+  end
+end
+
+# ❌ Bad - Multiple service calls or instance variables
+class UsersController < ApplicationController
+  def show
+    @user = UserService.find_user(params[:id])
+    @profile = ProfileService.find_profile(@user.id)
+    @settings = SettingsService.find_settings(@user.id)
+    @view_model = UserPresenter.new(@user).view_model
+  end
+end
+```
+
+## Benefits:
+- Forces small, focused methods
+- Encourages single responsibility principle
+- Makes code easier to test and maintain
+- Reduces complexity and cognitive load
+- Promotes better object design

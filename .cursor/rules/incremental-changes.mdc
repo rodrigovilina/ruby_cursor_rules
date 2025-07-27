@@ -1,0 +1,20 @@
+---
+alwaysApply: true
+---
+# Incremental Development Preference
+
+Always perform changes in really small steps, modifying one file at a time at most. 
+
+## Guidelines:
+- Make minimal, focused changes to a single file per operation
+- Prefer incomplete but working code over large, complex changes
+- Break down larger tasks into smaller, manageable pieces
+- Focus on one specific functionality or fix at a time
+- Avoid making multiple unrelated changes simultaneously
+
+## Benefits:
+- Easier to review and understand changes
+- Reduces risk of introducing bugs
+- Allows for better testing of individual components
+- Makes debugging simpler
+- Provides more granular control over the development process
