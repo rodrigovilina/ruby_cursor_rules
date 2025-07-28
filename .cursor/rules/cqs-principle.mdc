@@ -1,0 +1,122 @@
+---
+alwaysApply: false
+description: CQS (Command-Query Separation) principle - methods should be either queries or commands, rarely both
+---
+# CQS (Command-Query Separation) Principle
+
+When writing new code or modifying existing code, follow the CQS principle: each method should either be a query or a command, but very rarely both.
+
+## Core Principle:
+
+**Separate queries (calculations) from commands (state changes and I/O).**
+
+## Method Classification:
+
+### Queries (Calculations)
+Methods that **return values** without causing side effects:
+
+- **Pure calculations**: Mathematical operations, data transformations
+- **Data retrieval**: Getting values, reading properties
+- **Validation**: Checking conditions, verifying states
+- **Computations**: Derived values, aggregations
+
+**Characteristics:**
+- Return a value
+- No side effects
+- Can be called multiple times safely
+- Idempotent (same result for same input)
+
+### Commands (State Changes & I/O)
+Methods that **perform actions** and may have side effects:
+
+- **State modifications**: Changing object properties, updating data
+- **I/O operations**: File operations, database writes, network calls
+- **External interactions**: API calls, system commands
+- **Event triggers**: Notifications, logging, callbacks
+
+**Characteristics:**
+- May not return values (or return minimal status)
+- Have side effects
+- Change system state
+- May have different results on repeated calls
+
+## Examples:
+
+### ✅ Good - Clear Separation
+
+**Queries:**
+```ruby
+def calculate_total(items)
+  items.sum { |item| item.price * item.quantity }
+end
+
+def is_valid_email?(email)
+  email.match?(/\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i)
+end
+
+def get_user_by_id(id)
+  User.find(id)
+end
+```
+
+**Commands:**
+```ruby
+def save_user(user_data)
+  user = User.create!(user_data)
+  send_welcome_email(user)
+  log_user_creation(user)
+end
+
+def update_order_status(order, new_status)
+  order.update!(status: new_status)
+  notify_customer(order)
+end
+
+def delete_file(file_path)
+  File.delete(file_path)
+  log_file_deletion(file_path)
+end
+```
+
+### ❌ Bad - Mixed Responsibilities
+
+```ruby
+# Don't do this - mixing query and command
+def calculate_and_save_total(items)
+  total = items.sum { |item| item.price * item.quantity }
+  Order.create!(total: total)  # Side effect!
+  total  # Also returns value
+end
+
+# Don't do this - query with side effects
+def get_user_with_logging(id)
+  log_user_access(id)  # Side effect!
+  User.find(id)  # Query
+end
+```
+
+## Guidelines:
+
+### When Writing New Methods:
+1. **Ask**: "Is this a query or a command?"
+2. **Queries**: Focus on calculations and data retrieval
+3. **Commands**: Focus on state changes and I/O
+4. **Avoid**: Methods that do both
+
+### When Modifying Existing Code:
+1. **Identify**: Is the method doing too much?
+2. **Separate**: Split mixed methods into query and command parts
+3. **Refactor**: Extract pure calculations from side-effect methods
+
+### Naming Conventions:
+- **Queries**: Use descriptive names that indicate what they return
+  - `calculate_total`, `is_valid?`, `get_user_by_email`
+- **Commands**: Use imperative verbs that indicate actions
+  - `save_user`, `update_status`, `delete_file`, `send_email`
+
+## Benefits:
+- **Easier testing**: Queries can be tested independently
+- **Better reasoning**: Clear separation of concerns
+- **Reduced bugs**: Fewer side effects to track
+- **Improved performance**: Queries can be cached or optimized
+- **Cleaner code**: Each method has a single, clear purpose

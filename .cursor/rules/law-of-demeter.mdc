@@ -1,0 +1,163 @@
+---
+alwaysApply: false
+description: Law of Demeter - avoid calling methods on objects returned by other method calls
+---
+# Law of Demeter
+
+Follow the Law of Demeter: any given piece of code should not know the interface of the dependencies of its dependencies. Avoid calling methods on objects returned by other method calls, except for methods on raw data.
+
+## Core Principle:
+
+**Don't talk to strangers.** Only talk to:
+1. Yourself (your own methods)
+2. Your parameters
+3. Objects you create
+4. Your direct dependencies
+5. Raw data (strings, numbers, arrays, hashes)
+
+## The Rule:
+
+### ✅ Good - Following Law of Demeter
+```ruby
+# Direct access to own properties
+def get_user_name
+  @user.name
+end
+
+# Direct method calls on parameters
+def process_order(order)
+  order.total
+end
+
+# Direct calls on created objects
+def create_user
+  user = User.new
+  user.save
+end
+
+# Raw data operations
+def format_address(address)
+  address.split(',').map(&:strip)
+end
+```
+
+### ❌ Bad - Violating Law of Demeter
+```ruby
+# Don't do this - chaining method calls
+def get_customer_city
+  @order.customer.address.city  # Violation: accessing customer's address's city
+end
+
+def process_user_data
+  user = User.find(params[:id])
+  user.profile.preferences.notifications.email  # Violation: deep chaining
+end
+
+def update_order_status
+  @order.payment.gateway.transaction.status = 'completed'  # Violation: deep chaining
+end
+```
+
+## How to Fix Violations:
+
+### 1. Delegate Methods
+Create methods that encapsulate the chain:
+
+```ruby
+# Instead of: @order.customer.address.city
+class Order
+  def customer_city
+    customer.address.city
+  end
+end
+
+# Usage:
+def get_customer_city
+  @order.customer_city
+end
+```
+
+### 2. Tell, Don't Ask
+Instead of asking for data and then doing something with it, tell the object to do it:
+
+```ruby
+# Instead of:
+def process_order
+  if @order.customer.preferences.notifications.enabled?
+    @order.customer.preferences.notifications.send_email
+  end
+end
+
+# Do this:
+class Customer
+  def send_notification_if_enabled
+    preferences.notifications.send_email if preferences.notifications.enabled?
+  end
+end
+
+def process_order
+  @order.customer.send_notification_if_enabled
+end
+```
+
+### 3. Pass Data Down
+Instead of reaching up the chain, pass data down:
+
+```ruby
+# Instead of:
+def calculate_shipping
+  @order.customer.address.country.shipping_rules.calculate(@order.weight)
+end
+
+# Do this:
+def calculate_shipping
+  shipping_rules = @order.customer.address.country.shipping_rules
+  shipping_rules.calculate(@order.weight)
+end
+```
+
+## Exceptions for Raw Data:
+
+### ✅ Allowed - Raw Data Operations
+```ruby
+# Strings
+def format_name(name)
+  name.strip.downcase.capitalize
+end
+
+# Arrays
+def process_items(items)
+  items.select(&:active?).map(&:name)
+end
+
+# Hashes
+def extract_user_data(user_hash)
+  user_hash[:profile][:preferences][:notifications]
+end
+
+# Numbers
+def calculate_total(price, quantity, tax_rate)
+  price * quantity * (1 + tax_rate)
+end
+```
+
+## Guidelines:
+
+### When Writing Code:
+1. **Ask**: "Am I calling a method on an object returned by another method call?"
+2. **If yes**: Consider if this violates Law of Demeter
+3. **If it does**: Create a delegate method or restructure the code
+4. **Exception**: Raw data operations are generally acceptable
+
+### When Refactoring:
+1. **Identify**: Deep method chains in existing code
+2. **Extract**: Create delegate methods on appropriate objects
+3. **Simplify**: Reduce the depth of method calls
+4. **Test**: Ensure the new structure maintains the same behavior
+
+## Benefits:
+- **Loose coupling**: Objects depend less on each other's internal structure
+- **Easier testing**: Fewer dependencies to mock
+- **Better encapsulation**: Implementation details are hidden
+- **More maintainable**: Changes in one object don't cascade
+- **Clearer interfaces**: Objects expose only what they need to
