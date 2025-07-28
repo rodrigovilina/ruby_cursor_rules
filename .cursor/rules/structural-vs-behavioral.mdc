@@ -1,0 +1,86 @@
+---
+alwaysApply: false
+description: Separate structural from behavioral changes - never do both types at the same time
+---
+# Structural vs Behavioral Changes
+
+Always separate structural changes from behavioral changes. Never perform both types of changes simultaneously.
+
+## Change Classification:
+
+### Structural Changes
+Changes that affect the **organization, architecture, or structure** of the code without changing its behavior:
+
+- **Refactoring**: Moving methods, extracting classes, renaming variables
+- **Code organization**: Reorganizing file structure, moving code between files
+- **Interface changes**: Adding/removing method signatures, changing parameter names
+- **Architecture changes**: Splitting classes, combining classes, changing inheritance
+- **Formatting**: Code style changes, indentation, whitespace
+- **Comments**: Adding/removing documentation, updating comments
+- **Import/require statements**: Reorganizing dependencies
+
+### Behavioral Changes
+Changes that affect the **functionality, logic, or behavior** of the code:
+
+- **Logic changes**: Modifying algorithms, changing calculations
+- **Feature additions**: Adding new functionality
+- **Bug fixes**: Correcting incorrect behavior
+- **Performance optimizations**: Changing how something works
+- **Business logic**: Changing what the code does
+- **Data transformations**: Modifying how data is processed
+- **API changes**: Changing what methods return or how they work
+
+## Workflow Rules:
+
+### 1. Identify Change Type First
+Before making any change, explicitly identify whether it's:
+- **Structural** (how code is organized)
+- **Behavioral** (what code does)
+
+### 2. One Type at a Time
+- **Never** make structural and behavioral changes in the same commit/session
+- Complete all structural changes before starting behavioral changes
+- Or vice versa
+
+### 3. Clear Separation
+- Structural changes should not introduce new functionality
+- Behavioral changes should not reorganize code structure
+- Each change type should have a clear, focused purpose
+
+## Examples:
+
+### ✅ Good - Separate Changes
+**Structural Change:**
+```ruby
+# Extract method for better organization
+def calculate_total
+  items.sum { |item| item.price * item.quantity }
+end
+
+def display_total
+  puts "Total: $#{calculate_total}"
+end
+```
+
+**Behavioral Change (in separate session):**
+```ruby
+# Change calculation logic
+def calculate_total
+  items.sum { |item| item.price * item.quantity * (1 - item.discount) }
+end
+```
+
+### ❌ Bad - Mixed Changes
+```ruby
+# Don't do this - mixing structural and behavioral changes
+def calculate_total_with_discount  # Structural: new method name
+  items.sum { |item| item.price * item.quantity * (1 - item.discount) }  # Behavioral: new logic
+end
+```
+
+## Benefits:
+- **Easier debugging**: Clear separation makes it easier to identify issues
+- **Better testing**: Can test structural changes separately from behavioral changes
+- **Cleaner commits**: Each commit has a single, clear purpose
+- **Reduced risk**: Smaller, focused changes are less likely to introduce bugs
+- **Better code review**: Reviewers can focus on one type of change at a time

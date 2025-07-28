@@ -1,0 +1,108 @@
+---
+alwaysApply: false
+description: Tidy First approach - perform structural changes before behavioral changes when code doesn't follow rules
+---
+# Tidy First Approach
+
+When asked to make changes to code that's not clean or doesn't follow established rules, always perform structural changes first, then wait for confirmation before making behavioral changes.
+
+## Core Principle:
+
+**Clean the code structure before changing its behavior.**
+
+## Workflow:
+
+### 1. Assessment Phase
+When presented with code changes, first assess:
+- Does the code follow established rules (Sandi Metz, service objects, etc.)?
+- Is the code structure clean and well-organized?
+- Are there obvious structural issues that should be addressed first?
+
+### 2. Structural Changes First
+If the code has structural issues:
+- **Only perform structural changes initially**
+- Focus on refactoring, organization, and code structure
+- Do NOT introduce behavioral changes at this stage
+- Examples of structural changes to prioritize:
+  - Extracting long methods into smaller ones
+  - Moving code to appropriate classes/modules
+  - Renaming variables/methods for clarity
+  - Reorganizing file structure
+  - Fixing formatting and style issues
+
+### 3. Wait for Confirmation
+After completing structural changes:
+- **Stop and wait for user confirmation**
+- Present the cleaned-up code structure
+- Ask if behavioral changes should proceed
+- Do NOT automatically continue to behavioral changes
+
+### 4. Behavioral Changes (After Confirmation)
+Only after user confirms:
+- Proceed with the requested behavioral changes
+- Apply changes to the now-clean code structure
+- Maintain the improved structure while adding functionality
+
+## Examples:
+
+### Scenario: Long Method with New Feature Request
+**Original Code:**
+```ruby
+def process_order(order, user, payment_method, shipping_address, discount_code, tax_rate, currency)
+  # 50 lines of mixed logic
+  if order.items.any? { |item| item.out_of_stock? }
+    # complex inventory logic
+  end
+  # more mixed logic...
+end
+```
+
+**Tidy First Approach:**
+1. **Structural Changes Only:**
+   ```ruby
+   def process_order(order, user, payment_method, shipping_address, discount_code, tax_rate, currency)
+     validate_order(order)
+     process_payment(order, payment_method, currency)
+     handle_inventory(order)
+     calculate_totals(order, tax_rate, discount_code)
+   end
+
+   private
+
+   def validate_order(order)
+     # extracted validation logic
+   end
+
+   def process_payment(order, payment_method, currency)
+     # extracted payment logic
+   end
+
+   def handle_inventory(order)
+     # extracted inventory logic
+   end
+
+   def calculate_totals(order, tax_rate, discount_code)
+     # extracted calculation logic
+   end
+   ```
+
+2. **Wait for confirmation** before adding new behavioral features
+
+### When to Apply Tidy First:
+- Code violates Sandi Metz rules (long methods, too many arguments)
+- Service objects don't follow the established pattern
+- Code structure is unclear or poorly organized
+- Multiple responsibilities in single classes/methods
+- Inconsistent formatting or style issues
+
+### When NOT to Apply:
+- Code already follows all established rules
+- Request is purely behavioral with no structural issues
+- Code is already clean and well-organized
+
+## Benefits:
+- **Prevents technical debt**: Clean structure before adding features
+- **Easier maintenance**: Well-organized code is easier to modify
+- **Better testing**: Clean structure makes testing simpler
+- **Reduced bugs**: Structural issues can hide behavioral bugs
+- **Clearer intent**: Clean code better expresses its purpose

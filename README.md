@@ -19,3 +19,18 @@ Strict definition of what a Service Object is.
 
 Follow the Sandi Metz rules for developers.
 [Sandi Metz rules](./.cursor/rules/sandi-metz-rules.mdc)
+
+## Testing conventions
+
+Follow the conventions for unit tests files.
+[Testing conventions](./.cursor/rules/ruby-testing-conventions.mdc)
+
+## Tidy First
+
+Tidy First, before making changes.
+[Tidy First](./.cursor/rules/tidy-first.mdc)
+
+## Structural vs Behavioral changes
+
+Split structural from behavioral changes.
+[Structural vs Behavioral changes](./.cursor/rules/structural-vs-behavioral.mdc)

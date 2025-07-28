@@ -1,0 +1,101 @@
+---
+alwaysApply: false
+description: Ruby testing conventions with matching spec files and TDD workflow
+---
+# Ruby Testing Conventions
+
+Follow strict naming conventions for test files and always use TDD workflow when creating new files.
+
+## File Naming Convention:
+
+### Rule: Each Ruby file has a matching spec file
+- **Location**: Spec files go under the `spec/` directory
+- **Path**: Maintain the same directory structure as the source file
+- **Naming**: Add `_spec.rb` suffix to the original filename
+
+### Examples:
+```
+Source File                    → Spec File
+lib/main.rb                   → spec/lib/main_spec.rb
+app/models/user.rb            → spec/app/models/user_spec.rb
+app/controllers/users_controller.rb → spec/app/controllers/users_controller_spec.rb
+lib/services/order_processor.rb → spec/lib/services/order_processor_spec.rb
+```
+
+### Directory Structure:
+```
+project/
+├── lib/
+│   ├── main.rb
+│   └── services/
+│       └── order_processor.rb
+└── spec/
+    ├── lib/
+    │   ├── main_spec.rb
+    │   └── services/
+    │       └── order_processor_spec.rb
+```
+
+## TDD Workflow for New Files:
+
+### When Creating New Ruby Files:
+1. **Create the spec file first**
+2. **Follow TDD workflow**: Red → Green → Refactor
+3. **Write tests before implementation**
+4. **Add minimal code to make tests pass**
+
+### Example Workflow:
+```ruby
+# 1. Create spec file first: spec/lib/calculator_spec.rb
+RSpec.describe Calculator do
+  describe '#add' do
+    it 'adds two numbers' do
+      calculator = Calculator.new
+      expect(calculator.add(2, 3)).to eq(5)
+    end
+  end
+end
+
+# 2. Create minimal implementation: lib/calculator.rb
+class Calculator
+  def add(a, b)
+    a + b
+  end
+end
+```
+
+## Key Principles:
+
+### File Organization:
+- **Always** create spec files in the corresponding `spec/` directory
+- **Maintain** the same directory structure as source files
+- **Use** the `_spec.rb` suffix consistently
+- **Follow** the same naming conventions for both source and test files
+
+### TDD Process:
+- **Test First**: Write the spec file before the implementation
+- **Red Phase**: Write failing tests
+- **Green Phase**: Write minimal code to make tests pass
+- **Refactor**: Clean up code while keeping tests green
+
+### Naming Examples:
+```
+# Service Objects
+app/services/user_creator.rb → spec/app/services/user_creator_spec.rb
+
+# Models
+app/models/order.rb → spec/app/models/order_spec.rb
+
+# Controllers
+app/controllers/api/v1/users_controller.rb → spec/app/controllers/api/v1/users_controller_spec.rb
+
+# Libraries
+lib/utils/string_helper.rb → spec/lib/utils/string_helper_spec.rb
+```
+
+## Benefits:
+- **Consistent structure**: Easy to find corresponding test files
+- **TDD discipline**: Ensures tests are written before implementation
+- **Better coverage**: Every file has matching tests
+- **Clear organization**: Test structure mirrors source structure
+- **Easier maintenance**: Related files are easy to locate
